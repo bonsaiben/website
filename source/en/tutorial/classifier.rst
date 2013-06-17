@@ -1,49 +1,53 @@
 Classifier
 =================
 
-ここではJubatusの多値分類機能（Classifier）である、jubaclassifier を使用した、Jubatus Client の使い方を説明します。
+In this section, we will introduce how to use ``jubaclassifier`` through the Jubatus Client.
 
-多値分類機能（Classifier）とは、入力データを複数グループに分類する機能であり、スパムメールの判定などに利用することができます。
+Classifier is the function to classify given data. For example, You can use Classifier to detection of spam mail.
 
 -------------------------------------
-サンプルプログラムの概要
+Overview
 -------------------------------------
 
-サンプルとして、各時代の将軍は姓（苗字）ごとに名（名前）が似ていることから、将軍の名から姓を当てるというプログラム「shogun」を用いて説明していきます。
+The sample program is ``gender``. This program will classify data into male or female through the features of hair style, height and clothes.
 
-最初に、「"家康"という名は"徳川"という姓である」、「"尊氏"という名は"足利"という姓である」という、歴代将軍の名前を元に作成した一定量以上の姓（class）と名（name）のペアをクライアント側で用意し、分類するためのモデルをサーバ側に学習させます。これにより、姓をlabel、名をvalueとしたグループが作成されます。
+As a first step, update model in jubaclassifier using the training data.
 
-次に、予測用の入力データとして任意の名（name）をサーバ側に与え、サーバ側では先ほど学習したモデルを用い、姓（class）を予測して返却し、クライアント側で受け取った結果を出力するプログラムとなっています。
+The training data is a pair of class(male or female) and features(hair style, height, clothes). You will prepare some training data and make jubaclassifier learn those data.
 
-例えば、予測用の入力データとして"慶喜"をサーバ側に与えると、"徳川"が結果として出力されます。もちろん、「"慶喜"という名は"徳川"である」というデータは学習データに含まれていません。
+Next, analyze the test data using model in jubaclassifier.
 
+You will prepare features as a test data, jubaclassifier will classifiy this into male or female using model.
 
---------------------------------
-処理の流れ
---------------------------------
+For example, you give the feature data ["hair" : "long", "top" : "shirt", "bottom" : "skirt", "height" : 1.50], jubaclassifier will return "famale".
 
-Jubatus Client を使ったコーディングは、主に以下の流れになります。
-
- 1.Jubatus Serverへの接続設定
-  サーバ側で起動している Jubatus Server の HOST や PORT を指定し、接続設定をします。
-
- 2.学習用データの準備
-  一定量以上の名（name）に姓（label）を付与した学習データを作成します。
-
- 3.データの学習（学習モデルの更新）
-  2. で作成した学習データを train メソッドでサーバ側に与え、学習を行います。
-
- 4.予測用データの準備
-  予測用にサーバ側に投げる、名（name）のデータを作成します。
-
- 5.学習モデルに基づく予測
-  4. で作成した予測用データを入力値とし、classify メソッドで3. の学習に基づいた予測をします。
-
- 6.結果の出力
-  classify メソッドの戻り値である予測結果を出力します。
 
 --------------------------------
-サンプルプログラム
+Scenario
+--------------------------------
+
+The flow of development using Jubatus Client is following:
+
+ 1.Connection settings to jubaclassifier
+  Setting the HOST and RPC port of jubaclassifier.
+
+ 2.Prepare the training data
+  Make some pair of class and features.
+
+ 3.Data training (update the model)
+  Send the training data to jubaclassifier using ``train`` method.
+
+ 4.Prepare the test data
+  Make the feature data.
+
+ 5.Classify the test data
+  Send the test data to jubaclassifier using ``classify`` method.
+
+ 6.Output the result
+  Compare the score value of each classes. And output the class score is larger.
+
+--------------------------------
+Sample Program
 --------------------------------
 
 .. toctree::
